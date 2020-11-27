@@ -192,7 +192,7 @@ _start_session() {
 }
 
 _lock_screen() {
-  eval `_prop "lock.screen.command" "xmessage 'Time for break! Lock screen and some exercise :)'"`
+  eval $(_prop "lock.screen.command" "xmessage 'Time for break! Lock screen and some exercise :)'")
 }
 
 _kill_pomodoro_process() {

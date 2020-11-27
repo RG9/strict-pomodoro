@@ -180,6 +180,10 @@ _on_break() {
   local summary_and_rating_csv=$(_dialog_what_was_done)
   _log "#BREAK $summary_and_rating_csv"
   _lock_screen
+}
+
+_on_scheduled_break() {
+  _on_break
   _start_session
 }
 
@@ -188,7 +192,7 @@ _start_session() {
   _log "#START $summary_and_time_csv"
   local pomodoro_session_time=$(echo "$summary_and_time_csv" | rev | cut -d',' -f2 | rev)
   _sleep "${pomodoro_session_time}"
-  _on_break
+  _on_scheduled_break
 }
 
 _lock_screen() {
@@ -257,12 +261,13 @@ case "$1" in
     _start_session
     exit 0 ;;
   start) # starts pomodoro session in background and shows dialog box to log summary for the next task
-    _kill_pomodoro_process
+    _kill_pomodoro_process # TODO alert already running
     $0 _start 2>& 1 & # run background
     exit 0 ;;
   break) # shows dialog box to log progress and locks screen
     _kill_pomodoro_process
     _on_break
+    $0 _start 2>& 1 & # run background
     exit 0 ;;
   status) # prints last log
     _last_log_message

@@ -208,6 +208,10 @@ _kill_pomodoro_process() {
   wmctrl -F -c "$DIALOG_TITLE" # close dialogs
 }
 
+_is_pomodoro_process_running() {
+  ps -ax | grep "$(basename $0) _start" | grep -vc "grep"
+}
+
 _sleep() {
   local interval=$1
   local error_message=$(sleep "$interval" 2>&1)
@@ -256,6 +260,7 @@ _install() {
   "${EDITOR:-vi}" "${PROPERTIES_FILE_PATH}"
 }
 
+
 # MAIN PROGRAM
 case "$1" in
   install) # creates properties file, adds alias and checks required dependencies
@@ -265,7 +270,11 @@ case "$1" in
     _start_session
     exit 0 ;;
   start) # starts pomodoro session in background and shows dialog box to log summary for the next task
-    _kill_pomodoro_process # TODO alert already running
+    if [[ $(_is_pomodoro_process_running) -gt 0 ]]; then
+      echo "Pomodoro session already started:"
+      $0 status
+      exit 0
+    fi
     $0 _start 2>& 1 & # run background
     exit 0 ;;
   break) # shows dialog box to log progress and locks screen

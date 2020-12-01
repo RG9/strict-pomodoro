@@ -282,9 +282,11 @@ case "$1" in
 # exit 0
 #;;
   stop) # kills pomodoro timer process
-    _log_what_was_done
-    _log "#STOP pomodoro stopped"
     _kill_pomodoro_process
+    if [[ "$2" == "--log-break" || "$2" == "-lb" ]]; then
+      _log_what_was_done
+    fi
+    _log "#STOP pomodoro stopped"
     exit 0 ;;
   log) # logs TEXT or prints today log (when no args). Args: [TEXT] [--date={date-string:today}]. Example: log "forgot to log" --date=yesterday.
     if [[ "$2" != "" && "$2" != "--"* ]]; then

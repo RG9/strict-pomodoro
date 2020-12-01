@@ -176,9 +176,13 @@ _dialog_what_was_done() {
   _strict_dialog "What have you done in this session?\n\nLast log:\n$(_last_log_message)\n" "Short summary" "Rate session" "$ratings" "$default_rating"
 }
 
-_on_break() {
+_log_what_was_done() {
   local summary_and_rating_csv=$(_dialog_what_was_done)
   _log "#BREAK $summary_and_rating_csv"
+}
+
+_on_break() {
+  _log_what_was_done
   _lock_screen
 }
 
@@ -278,6 +282,7 @@ case "$1" in
 # exit 0
 #;;
   stop) # kills pomodoro timer process
+    _log_what_was_done
     _log "#STOP pomodoro stopped"
     _kill_pomodoro_process
     exit 0 ;;
